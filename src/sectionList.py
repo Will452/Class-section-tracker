@@ -4,13 +4,15 @@ from time import ctime
 import time
 import shelve
 
+
 def sectionListFromUrl(url):
+	""" Return a list of dict(s) each representing one section """
 	start_time = time.time()
 
 	# get the page
 	response = requests.get(url)
 	html = response.text
-
+	
 	# format time to 3 decimal places then print
 	load_time = "{:.3f}".format(time.time() - start_time)
 	print("--- %s seconds to get page ---" % load_time)
@@ -45,6 +47,8 @@ def sectionListFromUrl(url):
 
 	# count number of sections
 	num_sections = html.count("\"seats-info\"")
+	if num_sections == 0:
+		raise Exception("No sections found, check URL and endPoint")
 	print('Number of sections:', num_sections)
 
 	# format time to 3 decimal places then print
@@ -53,16 +57,15 @@ def sectionListFromUrl(url):
 	print("")
 	return section_list
 
-#adds sections to sectionLists in db file at filePath only if
-#sectionListEquals() determines them to be different
 def shelveSections(filePath, sections):
+	""" Shelves the sections object at filePath only if different
+	from the most recently added object. Records current time in lastUpdated, updates lastAdded, and creates new .db file if necessary.  """
 	curTime = time.time()
 	#time.time() is a float, but what is time.time?
 
-	d = shelve.open(filePath) #"data/sectionSnapshots"
+	d = shelve.open(filePath) # eg. "data/MATH123"
 
 	if "lastAdded" not in d:
-		print("First sectionList added to shelve")
 		d[str(curTime)] = sections
 		d["lastAdded"] = str(curTime)
 	else:
@@ -78,8 +81,9 @@ def shelveSections(filePath, sections):
 
 	d.close()
 
-#prints key value pairs in db for debugging
 def printShelve(filePath):
+	""" Print every section list object shelved at filePath.
+	Intended for debugging """
 	print("Sections stored in", filePath, ":\n")
 	d = shelve.open(filePath)
 	count = 0
@@ -93,8 +97,9 @@ def printShelve(filePath):
 	print("Last updated at", ctime(d["lastUpdated"]))
 	d.close()
 
-#compares all fields of sl's and returns true if all are equal
 def sectionListsEqual(sl1, sl2):
+	""" Compares two section list arguments returning true if all
+	fields are equal. Used to avoid storing duplicate section lists. """
 	sectionNumber = 0
 	#iterate sections
 	for dict in sl1:

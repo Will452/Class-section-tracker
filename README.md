@@ -14,9 +14,10 @@ Web scraping to later build a course availability tracker
   - [X] Only store new sectionList if it's different -2/21/2021
   - [X] Write function to check sectionList equality - 2/21/2021
   - [X] Consider storing timestamp of last scraping to draw better graph -> now stored in "lastUpdated" - 2/21/2021
-  - [ ] Consider making individual db files for each class eg CMSC351
+  - [X] Consider making individual db files for each class eg CMSC351
 - [ ] Write function to calculate total seats, waitlist, etc. from obj
 - [ ] Learn how to draw a line chart with the collected data
 - [ ] Learn how to ?make a server? run this script periodically
-- [ ] Use regular expressions to edit URL and scrape more pages
-- [ ] Scrape the page w links to diff majors to get all classes at once
+- [ ] Use regular expressions to scrape a list? of all courses
+- [ ] Add gitIgnore file to avoid storing data on GitHub
+- [ ] Add multithreading on page requests to save time on many requests
