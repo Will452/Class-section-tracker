@@ -5,18 +5,21 @@ import time
 import shelve
 
 
-def sectionListFromUrl(url):
+def sectionListFromUrl(url, debug):
 	""" Return a list of dict(s) each representing one section """
-	start_time = time.time()
+	if debug:
+		start_time = time.time()
 
 	# get the page
+		print("Getting page from " + url)
 	response = requests.get(url)
 	html = response.text
 	
 	# format time to 3 decimal places then print
-	load_time = "{:.3f}".format(time.time() - start_time)
-	print("--- %s seconds to get page ---" % load_time)
-	start_time = time.time() # reset timer
+	if debug:
+		load_time = "{:.3f}".format(time.time() - start_time)
+		print("--- %s seconds to get page ---" % load_time)
+		start_time = time.time() # reset timer
 
 	#parse page
 		#sample section of interest:
@@ -49,15 +52,17 @@ def sectionListFromUrl(url):
 	num_sections = html.count("\"seats-info\"")
 	if num_sections == 0:
 		raise Exception("No sections found, check URL and endPoint")
-	print('Number of sections:', num_sections)
+	if debug:
+		print('Number of sections:', num_sections)
 
-	# format time to 3 decimal places then print
-	parse_time = "{:.3f}".format(time.time() - start_time)	
-	print("--- %s seconds to run regex ---" % (parse_time))
-	print("")
+		# format time to 3 decimal places then print
+		parse_time = "{:.3f}".format(time.time() - start_time)	
+		print("--- %s seconds to run regex ---" % (parse_time))
+	if not isinstance(section_list, list):
+		raise Exception("Tried to add empty section_list, check code")
 	return section_list
 
-def shelveSections(filePath, sections):
+def shelveSections(filePath, sections, debug):
 	""" Shelves the sections object at filePath only if different
 	from the most recently added object. Records current time in lastUpdated, updates lastAdded, and creates new .db file if necessary.  """
 	curTime = time.time()
@@ -71,9 +76,11 @@ def shelveSections(filePath, sections):
 	else:
 		#check if lastAdded is same as new sectionList
 		if sectionListsEqual(d[d["lastAdded"]], sections):
-			print("Same as last, not adding\n")
+			if debug:
+				print("Same as last, not adding\n")
 		else:
-			print("Differrent, adding to shelve\n")
+			if debug:
+				print("Differrent, adding to shelve\n")
 			d[str(curTime)] = sections
 			d["lastAdded"] = str(curTime)
 
@@ -84,23 +91,30 @@ def shelveSections(filePath, sections):
 def printShelve(filePath):
 	""" Print every section list object shelved at filePath.
 	Intended for debugging """
-	print("Sections stored in", filePath, ":\n")
+	brief = True
+
+	print("Sections stored in", filePath, ":")
 	d = shelve.open(filePath)
 	count = 0
 	for key in list(d.keys()):
 		count += 1
-		if key != "lastAdded" and key != "lastUpdated":
+		if key != "lastAdded" and key != "lastUpdated" and (not brief):
 			print(ctime(float(key)))
 			print(d[key], "\n")
-	print("Printed", count-2, "sectionLists")
+	print("Counted", count-2, "sectionLists")
 
-	print("Last updated at", ctime(d["lastUpdated"]))
+	print("Last updated at", ctime(d["lastUpdated"]), "\n")
 	d.close()
 
 def sectionListsEqual(sl1, sl2):
 	""" Compares two section list arguments returning true if all
 	fields are equal. Used to avoid storing duplicate section lists. """
 	sectionNumber = 0
+
+	#ensure parameters are lists
+	if not (isinstance(sl1, list) and isinstance(sl2, list)):
+		raise Exception("Type error, sectionListsEqual expected list not " + str(type(sl1)) + " and " + str(type(sl2)));
+
 	#iterate sections
 	for dict in sl1:
 		#iterate key value pairs

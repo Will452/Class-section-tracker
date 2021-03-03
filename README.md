@@ -5,8 +5,6 @@ Web scraping to later build a course availability tracker
 
 
 - [X] Get and parse data
-  - optional:
-  - [ ] Use numpy arrays if you need more speed
   - [X] Measure how long this takes: <0.01s is fast enough -2/17/2021
 - [X] Store responses in a data structure -2/17/2021
 - [X] Convert into a function that takes url and returns obj -2/18/2021

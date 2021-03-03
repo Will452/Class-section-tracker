@@ -1,14 +1,18 @@
 
 from src.sectionList import sectionListFromUrl, shelveSections, printShelve
 
-endPoint = "CMSC351"
-URL = "https://app.testudo.umd.edu/soc/202101/"
-fullURL = URL + endPoint[0:4] + "/" + endPoint
+endPointList = ["CMSC351", "CMSC216"]
+debug = False
 
-sectionList = sectionListFromUrl(fullURL)
-print(sectionList)
+for endPoint in endPointList:
 
-shelveSections("data/" + endPoint, sectionList)
-printShelve("data/" + endPoint)
+	URL = "https://app.testudo.umd.edu/soc/202101/"
+	fullURL = URL + endPoint[0:4] + "/" + endPoint
+
+	sectionList = sectionListFromUrl(fullURL, debug)
+	#print(sectionList)
+
+	shelveSections("data/" + endPoint[0:4] + "/" + endPoint, sectionList, debug)
+	#printShelve("data/" + endPoint[0:4] + "/" + endPoint)
 
 print("done")
