@@ -92,6 +92,7 @@ def printShelve(filePath):
 	""" Print every section list object shelved at filePath.
 	Intended for debugging """
 	brief = True
+	createdAt = 0
 
 	print("Sections stored in", filePath, ":")
 	d = shelve.open(filePath)
@@ -101,8 +102,11 @@ def printShelve(filePath):
 		if key != "lastAdded" and key != "lastUpdated" and (not brief):
 			print(ctime(float(key)))
 			print(d[key], "\n")
+		if count == 2:
+			createdAt = key
 	print("Counted", count-2, "sectionLists")
 
+	print("Created at", ctime(int(float(createdAt))))
 	print("Last updated at", ctime(d["lastUpdated"]), "\n")
 	d.close()
 

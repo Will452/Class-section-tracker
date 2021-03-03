@@ -13,6 +13,6 @@ for endPoint in endPointList:
 	#print(sectionList)
 
 	shelveSections("data/" + endPoint[0:4] + "/" + endPoint, sectionList, debug)
-	#printShelve("data/" + endPoint[0:4] + "/" + endPoint)
+	printShelve("data/" + endPoint[0:4] + "/" + endPoint)
 
 print("done")
